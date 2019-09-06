@@ -6,7 +6,13 @@
 # VERSION 1.0 : LAST_CHANGED 2019-09-05
 # LICENSE: MIT
 
-if [[ "\$OSTYPE" != "linux-gnu" ]]; then
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+  RC_FILE=~/.bashrc
+  echo "Installing for linux, installing configuration to: $RC_FILE"
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+  RC_FILE=~/.profile
+  echo "Installing for osx, installing configuration to: $RC_FILE"
+else
   echo "Only GNU Linux is guarenteed to work. If not,
   do this yourself, and know what you're doing"
   exit 1
@@ -27,7 +33,13 @@ fi
 # virtualenv
   # DOCS: https://virtualenv.pypa.io/en/latest/
   # This and pip are the only things installed globally! Keep clean!
-sudo apt-get install python-pip
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+  sudo apt-get install python-pip
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+  curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+  python get-pip.py
+  rm get-pip.py
+fi
 pip install --user --upgrade pip
 pip install --user virtualenv
 
@@ -39,25 +51,36 @@ pip install --user virtualenv
   # DOCS: https://github.com/pyenv/pyenv-virtualenv#usage
   # Usage: pyenv virtualenv PY_VERSION_I_WANT (MY-PROJ-NAME-OPTIONAL-)PY_VERSION_I_WANT
   # Ex: pyenv virtualenv 3.5.2 test-proj-3.5.2
-sudo apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev \
-libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
-xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev libffi-dev \
-liblzma-dev python-openssl git
-curl https://pyenv.run | bash
-cat <<EXCL >> ~/.bashrc
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+  sudo apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev \
+  libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
+  xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev libffi-dev \
+  liblzma-dev python-openssl git
+  curl https://pyenv.run | bash
+  export PATH="$HOME/.pyenv/bin:\$PATH"
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+  brew update
+  brew install curl git
+  brew install pyenv pyenv-virtualenv
+fi
+cat <<EXCL >> $RC_FILE
 # pyenv setup
-export PATH="$HOME/.pyenv/bin:\$PATH"
 eval "\$(pyenv init -)"
 eval "\$(pyenv virtualenv-init -)"
 
 EXCL
-source ~/.bashrc
+  
+source $RC_FILE
 pyenv update
 
 # direnv: see github wiki for below configs; do last
   # DOCS: https://github.com/direnv/direnv/wiki
-sudo apt-get install direnv
-cat <<EXCL >> ~/.bashrc
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+  sudo apt-get install direnv
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+  brew install direnv
+fi
+cat <<EXCL >> $RC_FILE
 # direnv config
 eval "\$(direnv hook bash)"
 
@@ -123,7 +146,7 @@ EXCL
   # All generated file exclusions to project .gitignore
 # direnv - tmux
   # DOCS: https://github.com/direnv/direnv/wiki/Tmux
-cat <<EXCL >> ~/.bashrc
+cat <<EXCL >> $RC_FILE
 alias tmux='direnv exec / tmux'
 
 EXCL
@@ -131,7 +154,7 @@ EXCL
   # DOCS: https://github.com/direnv/direnv/wiki/PS1
   # DOCS: https://github.com/direnv/direnv/wiki/Python
   # direnv needs to come last in bashrc, but ps1 can have more mods (git!)
-cat <<EXCL >> ~/.bashrc
+cat <<EXCL >> $RC_FILE
 # Custom solution to disp git branch, from webs
 parse_git_branch() {
      git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
@@ -149,7 +172,7 @@ PS1='\$(show_virtual_env)'\$PS1
 
 EXCL
 
-source ~/.bashrc
+source $RC_FILE
 echo "You should clean up / order your .bashrc, don't let it get messy"
 echo "To install python, look up 'pyenv', or enter it in the terminal, 'pyenv versions'"
 echo "Install a python version using 'pyenv install VERSION' Or use -l to list options"
