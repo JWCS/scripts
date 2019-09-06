@@ -3,6 +3,8 @@
 # User should read up on the following to know how to use it.
 # DOCS: See each section:
 # AUTHOR: Jude Sauve <sauve031@umn.edu>
+# VERSION 1.0 : LAST_CHANGED 2019-09-05
+# LICENSE: MIT
 
 if [[ "\$OSTYPE" != "linux-gnu" ]]; then
   echo "Only GNU Linux is guarenteed to work. If not,
