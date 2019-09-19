@@ -40,7 +40,6 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
   python get-pip.py
   rm get-pip.py
 fi
-pip install --user --upgrade pip
 pip install --user virtualenv
 
 
