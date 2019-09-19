@@ -42,6 +42,11 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
 fi
 pip install --user virtualenv
 
+cat <<EXCL >> $RC_FILE
+
+# Custom Additions
+
+EXCL
 
 # pyenv + pyenv-virtualenv plugin
   # DOCS: https://objectpartners.com/2018/11/27/managing-multiple-python-instances/
@@ -56,7 +61,8 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
   xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev libffi-dev \
   liblzma-dev python-openssl git
   curl https://pyenv.run | bash
-  export PATH="$HOME/.pyenv/bin:\$PATH"
+  echo 'export PYENV_ROOT="$HOME/.pyenv"'>> $RC_FILE
+  echo 'export PATH="$HOME/.pyenv/bin:$PATH"' >> $RC_FILE
 elif [[ "$OSTYPE" == "darwin"* ]]; then
   brew update
   brew install curl git
@@ -158,7 +164,7 @@ cat <<EXCL >> $RC_FILE
 parse_git_branch() {
      git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
 }
-PS1='$(parse_git_branch)\[\033[00m\]'$PS1
+PS1='\$(parse_git_branch)\[\033[00m\]'\$PS1
 
 # PS1 Mod
 show_virtual_env() {
