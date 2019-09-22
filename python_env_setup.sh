@@ -6,6 +6,24 @@
 # VERSION 1.0 : LAST_CHANGED 2019-09-05
 # LICENSE: MIT
 
+# How to develop with python once this is all installed
+# In your new project directory, make a .envrc file
+# In your ~/.direnvrc file, at the bottom is some commented-out code, for a .envrc file
+# Place the code in the .envrc file. The double commented out lines should still be commented out. 
+# I usually copy-paste another .envrc file when I make a new project
+# You need to change two things: the `pyversion=X.Y.Z` needs the version of python you want to use.
+# The `pvenv=PROJECT-NAME` needs the project name.
+# Upon exiting, it will ask you to run `direnv allow` once
+# Afterwards, whenever you cd into this directory, you're in a special python environment, separate
+# from every other environment. If you cd out, you will leave the environment.
+# Try to only install with pip, BUT: do not use --user/-H and do not use sudo.
+# If you have not used this before, your version of python you want to use will not be installed. 
+# To install a python version, use `pyenv install X.Y.Z` (this will auto-complete).
+# For example, to install the last 3.5 version, run `pyenv install 3.5.7` - or use more recent version.
+# There should be words on the left of the terminal interface, with possibly your python environment
+# or git branch. These were also done in here; it's called the PS1. To change this, change it in your
+# ~/.bashrc file. If it doesn't work, make an issue. 
+
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
   RC_FILE=~/.bashrc
   echo "Installing for linux, installing configuration to: $RC_FILE"
